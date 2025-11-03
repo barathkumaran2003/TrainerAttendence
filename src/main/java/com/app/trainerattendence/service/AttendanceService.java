@@ -1,7 +1,9 @@
 package com.app.trainerattendence.service;
 
 import com.app.trainerattendence.model.Attendance;
+import com.app.trainerattendence.model.User;
 import com.app.trainerattendence.repository.AttendanceRepository;
+import com.app.trainerattendence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,20 +17,23 @@ import java.util.List;
 public class AttendanceService {
 
     private final AttendanceRepository attendanceRepository;
+    private final UserRepository userRepository;
 
-    // ✅ Check-in
     public Attendance checkIn(String userId, String department, double latitude, double longitude) {
+        User user = userRepository.findByUserId(userId);
+
         Attendance attendance = new Attendance();
         attendance.setUserId(userId);
+        attendance.setUserName(user != null ? user.getName() : "Unknown"); // ✅ Show name
         attendance.setDepartment(department);
+        attendance.setDate(LocalDate.now());
         attendance.setCheckInTime(LocalDateTime.now());
         attendance.setCheckInLatitude(latitude);
         attendance.setCheckInLongitude(longitude);
-        attendance.setDate(LocalDate.now());
+
         return attendanceRepository.save(attendance);
     }
 
-    // ✅ Check-out with duration calculation
     public Attendance checkOut(String userId, double latitude, double longitude) {
         Attendance attendance = attendanceRepository.findTopByUserIdOrderByCheckInTimeDesc(userId);
 
@@ -37,7 +42,7 @@ public class AttendanceService {
             attendance.setCheckOutLatitude(latitude);
             attendance.setCheckOutLongitude(longitude);
 
-            // Calculate duration between check-in and check-out
+            // ✅ Calculate duration
             Duration duration = Duration.between(attendance.getCheckInTime(), attendance.getCheckOutTime());
             long hours = duration.toHours();
             long minutes = duration.toMinutesPart();
@@ -45,21 +50,18 @@ public class AttendanceService {
 
             return attendanceRepository.save(attendance);
         }
-        return attendance;
+        return null;
     }
 
-    // ✅ Get all attendance records
     public List<Attendance> getAllAttendance() {
         return attendanceRepository.findAll();
     }
 
-    // ✅ Get all records by a specific user
     public List<Attendance> getUserAttendance(String userId) {
         return attendanceRepository.findByUserId(userId);
     }
 
-    // ✅ Get attendance within date range
-    public List<Attendance> getAttendanceByDateRange(LocalDate startDate, LocalDate endDate) {
-        return attendanceRepository.findByDateBetween(startDate, endDate);
+    public List<Attendance> getAttendanceByDateRange(LocalDate start, LocalDate end) {
+        return attendanceRepository.findByDateBetween(start, end);
     }
 }

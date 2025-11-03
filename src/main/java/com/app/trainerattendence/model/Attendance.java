@@ -19,6 +19,7 @@ public class Attendance {
     private String id;
 
     private String userId;
+    private String userName; // ✅ Added: to display name in attendance
     private String department;
 
     private LocalDate date;
