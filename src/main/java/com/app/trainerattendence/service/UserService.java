@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -16,9 +17,17 @@ public class UserService {
 
     public User registerUser(User user) {
         if (user.getUserId() == null || user.getUserId().isEmpty()) {
-            user.setUserId(UUID.randomUUID().toString()); // ✅ Auto-generate userId
+            user.setUserId(UUID.randomUUID().toString());
         }
         return userRepository.save(user);
+    }
+
+    // ✅ Modified to return only "USER" roles
+    public List<User> getAllNormalUsers() {
+        return userRepository.findAll()
+                .stream()
+                .filter(u -> "USER".equalsIgnoreCase(u.getRole()))
+                .collect(Collectors.toList());
     }
 
     public List<User> getAllUsers() {

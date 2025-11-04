@@ -1,7 +1,5 @@
 package com.app.trainerattendence.controller;
 
-
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,14 +24,15 @@ public class UserController {
     @PostMapping("/register")
     public User registerUser(@RequestBody User user) {
         return userService.registerUser(user);
-
     }
 
+    @Operation(summary = "Get all users", description = "Returns only users with role 'USER' (excludes admins).")
     @GetMapping("/all")
     public List<User> getAllUsers() {
-        return userService.getAllUsers();
+        return userService.getAllNormalUsers(); // ✅ Changed to filter only USER roles
     }
 
+    @Operation(summary = "Get user by email", description = "Fetch user details by email address.")
     @GetMapping("/{email}")
     public User getUserByEmail(@PathVariable String email) {
         return userService.getUserByEmail(email);
