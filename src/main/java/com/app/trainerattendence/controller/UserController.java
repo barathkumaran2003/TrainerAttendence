@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -29,12 +30,21 @@ public class UserController {
     @Operation(summary = "Get all users", description = "Returns only users with role 'USER' (excludes admins).")
     @GetMapping("/all")
     public List<User> getAllUsers() {
-        return userService.getAllNormalUsers(); // ✅ Changed to filter only USER roles
+        return userService.getAllNormalUsers();
     }
 
     @Operation(summary = "Get user by email", description = "Fetch user details by email address.")
     @GetMapping("/{email}")
     public User getUserByEmail(@PathVariable String email) {
         return userService.getUserByEmail(email);
+    }
+
+    // ✅ New Login API
+    @Operation(summary = "User Login", description = "Logs in a user by verifying email and password.")
+    @PostMapping("/login")
+    public Object loginUser(@RequestBody Map<String, String> loginRequest) {
+        String email = loginRequest.get("email");
+        String password = loginRequest.get("password");
+        return userService.loginUser(email, password);
     }
 }
