@@ -5,5 +5,5 @@ import com.app.trainerattendence.model.User;
 
 public interface UserRepository extends MongoRepository<User, String> {
     User findByEmail(String email);
-    User findByUserId(String userId); // ✅ Added for lookup during attendance
+    User findByUserId(String userId);
 }

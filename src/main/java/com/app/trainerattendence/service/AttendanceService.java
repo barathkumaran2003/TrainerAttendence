@@ -1,9 +1,7 @@
 package com.app.trainerattendence.service;
 
 import com.app.trainerattendence.model.Attendance;
-import com.app.trainerattendence.model.User;
 import com.app.trainerattendence.repository.AttendanceRepository;
-import com.app.trainerattendence.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,32 +15,34 @@ import java.util.List;
 public class AttendanceService {
 
     private final AttendanceRepository attendanceRepository;
-    private final UserRepository userRepository;
 
-    public Attendance checkIn(String userId, String department, double latitude, double longitude) {
-        User user = userRepository.findByUserId(userId);
+    public Attendance checkIn(String userId, String userName, String department,
+                              double latitude, double longitude, String address,boolean mode) {
 
         Attendance attendance = new Attendance();
         attendance.setUserId(userId);
-        attendance.setUserName(user != null ? user.getName() : "Unknown"); // ✅ Show name
+        attendance.setUserName(userName);
         attendance.setDepartment(department);
+        attendance.setMode(mode);
         attendance.setDate(LocalDate.now());
         attendance.setCheckInTime(LocalDateTime.now());
         attendance.setCheckInLatitude(latitude);
         attendance.setCheckInLongitude(longitude);
+        attendance.setCheckInAddress(address);
 
         return attendanceRepository.save(attendance);
     }
 
-    public Attendance checkOut(String userId, double latitude, double longitude) {
+    public Attendance checkOut(String userId, String userName, String department,
+            double latitude, double longitude, String address,boolean mode) {
         Attendance attendance = attendanceRepository.findTopByUserIdOrderByCheckInTimeDesc(userId);
 
         if (attendance != null && attendance.getCheckOutTime() == null) {
             attendance.setCheckOutTime(LocalDateTime.now());
             attendance.setCheckOutLatitude(latitude);
             attendance.setCheckOutLongitude(longitude);
+            attendance.setCheckOutAddress(address);
 
-            // ✅ Calculate duration
             Duration duration = Duration.between(attendance.getCheckInTime(), attendance.getCheckOutTime());
             long hours = duration.toHours();
             long minutes = duration.toMinutesPart();

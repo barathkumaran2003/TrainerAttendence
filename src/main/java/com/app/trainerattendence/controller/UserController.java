@@ -1,7 +1,9 @@
 package com.app.trainerattendence.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.app.trainerattendence.model.User;
 import com.app.trainerattendence.service.UserService;
@@ -47,4 +49,24 @@ public class UserController {
         String password = loginRequest.get("password");
         return userService.loginUser(email, password);
     }
+
+    // ------------------------------------------------------------
+    // ✅ ✅ ✅ Added Code Below (Nothing above is changed)
+    // ------------------------------------------------------------
+
+    @Operation(summary = "Upload Profile Photo", description = "Upload user profile picture as binary data")
+    @PostMapping(value = "/upload-photo/{userId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public User uploadProfilePhoto(
+            @PathVariable String userId,
+            @RequestPart("photo") MultipartFile photo
+    ) throws Exception {
+        return userService.uploadProfilePhoto(userId, photo);
+    }
+
+    @Operation(summary = "Get User Profile Photo", description = "Fetch user profile photo in binary image format")
+    @GetMapping(value = "/photo/{userId}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public byte[] getProfilePhoto(@PathVariable String userId) {
+        return userService.getProfilePhoto(userId);
+    }
+
 }

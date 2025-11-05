@@ -24,19 +24,31 @@ public class AttendanceController {
     @PostMapping("/checkin")
     public Attendance checkIn(@RequestBody Map<String, Object> body) {
         String userId = (String) body.get("userId");
+        String userName = (String) body.get("name");
         String department = (String) body.get("department");
-        double lat = Double.parseDouble(body.get("latitude").toString());
-        double lon = Double.parseDouble(body.get("longitude").toString());
-        return attendanceService.checkIn(userId, department, lat, lon);
+        boolean mode =  (boolean) body.get("mode");
+
+
+        double lat = Double.parseDouble(body.get("checkInLatitude").toString());
+        double lon = Double.parseDouble(body.get("checkInLongitude").toString());
+        String address = (String) body.get("checkInAddress");
+
+        return attendanceService.checkIn(userId, userName, department, lat, lon, address,mode);
     }
 
     @Operation(summary = "Check-out", description = "Records user's check-out time, calculates duration.")
     @PostMapping("/checkout")
     public Attendance checkOut(@RequestBody Map<String, Object> body) {
         String userId = (String) body.get("userId");
-        double lat = Double.parseDouble(body.get("latitude").toString());
-        double lon = Double.parseDouble(body.get("longitude").toString());
-        return attendanceService.checkOut(userId, lat, lon);
+        String userName = (String) body.get("name");
+        String department = (String) body.get("department");
+        boolean mode =  (boolean) body.get("mode");
+
+        double lat = Double.parseDouble(body.get("checkOutLatitude").toString());
+        double lon = Double.parseDouble(body.get("checkOutLongitude").toString());
+        String address = (String) body.get("checkOutAddress");
+
+        return attendanceService.checkOut(userId, userName, department, lat, lon, address,mode);
     }
 
     @Operation(summary = "Get all attendance records", description = "Fetches all attendance data.")
