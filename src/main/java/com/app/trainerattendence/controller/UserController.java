@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.app.trainerattendence.model.User;
 import com.app.trainerattendence.service.UserService;
+import com.app.trainerattendence.service.UserServiceInterface;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,7 +22,7 @@ import java.util.Map;
 @Tag(name = "User APIs", description = "Endpoints for managing user accounts")
 public class UserController {
 
-    private final UserService userService;
+    private final UserServiceInterface userService;
 
     @Operation(summary = "Register a new user", description = "Registers a new user with role (Admin/User).")
     @PostMapping("/register")

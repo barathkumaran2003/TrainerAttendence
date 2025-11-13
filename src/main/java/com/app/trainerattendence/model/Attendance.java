@@ -19,23 +19,24 @@ public class Attendance {
     private String id;
 
     private String userId;
-    private String userName; // ✅ Display Name
+    private String userName;
     private String department;
 
     private LocalDate date;
 
-    private boolean mode;
-    
+    private boolean checkInMode;
+    private boolean checkOutMode;
+
     private LocalDateTime checkInTime;
     private LocalDateTime checkOutTime;
 
     private double checkInLatitude;
     private double checkInLongitude;
-    private String checkInAddress; // ✅ NEW FIELD
+    private String checkInAddress;
 
     private double checkOutLatitude;
     private double checkOutLongitude;
-    private String checkOutAddress; // ✅ NEW FIELD
+    private String checkOutAddress;
 
-    private String duration; // e.g., "2h 15m"
+    private String duration;
 }

@@ -7,7 +7,11 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface AttendanceRepository extends MongoRepository<Attendance, String> {
-    Attendance findTopByUserIdOrderByCheckInTimeDesc(String userId);
+
+    // FIX: Find today's record only
+    Attendance findByUserIdAndDate(String userId, LocalDate date);
+
     List<Attendance> findByUserId(String userId);
+
     List<Attendance> findByDateBetween(LocalDate start, LocalDate end);
 }

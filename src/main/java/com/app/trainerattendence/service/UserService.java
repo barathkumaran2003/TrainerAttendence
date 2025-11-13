@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,11 +16,12 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserServiceInterface {
 
     private final UserRepository userRepository;
 
     // ✅ Register New User
+    @Override
     public User registerUser(User user) {
         if (user.getUserId() == null || user.getUserId().isEmpty()) {
             user.setUserId(UUID.randomUUID().toString());
@@ -27,29 +30,47 @@ public class UserService {
     }
 
     // ✅ Get Only Normal Users (Exclude Admins)
+    @Override
     public List<User> getAllNormalUsers() {
-        return userRepository.findAll()
+        List<User> users = userRepository.findAll()
                 .stream()
                 .filter(u -> "USER".equalsIgnoreCase(u.getRole()))
                 .toList();
+
+        List<User> reversed = new ArrayList<>();
+        reversed.addAll(users);
+        Collections.reverse(reversed);
+
+        return reversed;
     }
 
     // ✅ Get All Users if needed internally
+    @Override
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+    	int a=0;
+        List<User> all = userRepository.findAll();
+        int size = all.size();
+    	for(int i=size-1;i>=0;i--)
+    	{
+    		all.set(a++, all.get(i));
+    	}
+        return all;
     }
 
     // ✅ Get By Email
+    @Override
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
     // ✅ Get By User ID
+    @Override
     public User getUserByUserId(String userId) {
         return userRepository.findByUserId(userId);
     }
 
     // ✅ Login Service
+    @Override
     public Object loginUser(String email, String password) {
         User existingUser = userRepository.findByEmail(email);
 
@@ -75,6 +96,7 @@ public class UserService {
     }
 
     // ✅ Upload Profile Photo (Binary)
+    @Override
     public User uploadProfilePhoto(String userId, MultipartFile file) throws IOException {
         User user = userRepository.findByUserId(userId);
 
@@ -87,6 +109,7 @@ public class UserService {
     }
 
     // ✅ Get Profile Photo (Binary)
+    @Override
     public byte[] getProfilePhoto(String userId) {
         User user = userRepository.findByUserId(userId);
         return (user != null) ? user.getProfilePhoto() : null;
