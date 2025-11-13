@@ -1,11 +1,13 @@
 package com.app.trainerattendence.service;
 
 import com.app.trainerattendence.model.Attendance;
+import com.app.trainerattendence.model.User;
 import com.app.trainerattendence.repository.AttendanceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -100,9 +102,17 @@ public class AttendanceService implements AttendanceServiceInterface {
     @Override
     public List<Attendance> getUserAttendance(String userId) {
         List<Attendance> list = attendanceRepository.findByUserId(userId);
-        Collections.reverse(list);
-        return list;
+
+        if (list == null || list.isEmpty()) {
+            return List.of();  // return empty list instead of null
+        }
+
+        List<Attendance> reversed = new ArrayList<>(list);
+        reversed.addAll(list);
+        Collections.reverse(reversed);
+        return reversed;
     }
+
 
     @Override
     public List<Attendance> getAttendanceByDateRange(LocalDate start, LocalDate end) {
