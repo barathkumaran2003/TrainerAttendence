@@ -25,4 +25,8 @@ public interface UserServiceInterface {
 
 	byte[] getProfilePhoto(String userId);
 
+	Object changePassword(String userId, String oldPassword, String newPassword);
+
+	Object updateName(String userId, String newName);
+
 }

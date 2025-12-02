@@ -17,7 +17,6 @@ public class Attendance {
 
     @Id
     private String id;
-
     private String userId;
     private String userName;
     private String department;

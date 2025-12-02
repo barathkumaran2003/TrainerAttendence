@@ -27,7 +27,7 @@ public class AttendanceService implements AttendanceServiceInterface {
 
     // -------------------- CHECK-IN --------------------
     @Override
-    public Attendance checkIn(String userId, String userName, String department,
+    public String checkIn(String userId, String userName, String department,
                               double latitude, double longitude, String address, boolean mode) {
 
         LocalDate today = getTodayIST();
@@ -35,7 +35,7 @@ public class AttendanceService implements AttendanceServiceInterface {
         // ❗ Prevent multiple check-ins in same day
         Attendance existing = attendanceRepository.findByUserIdAndDate(userId, today);
         if (existing != null) {
-            return existing; // Already checked-in today
+            return "Already checked-in today"; // Already checked-in today
         }
 
         Attendance attendance = new Attendance();
@@ -54,11 +54,21 @@ public class AttendanceService implements AttendanceServiceInterface {
 
         attendance.setCheckOutMode(false); // default
 
-        return attendanceRepository.save(attendance);
+        Attendance saved = attendanceRepository.save(attendance);
+        if(saved!=null)
+        {
+            return "Checked-in Successfully";
+        }
+        else
+        {
+        	return "Error in saving the data";
+        }
+       
     }
 
     // -------------------- CHECK-OUT --------------------
     @Override
+  
     public Attendance checkOut(String userId, double latitude, double longitude,
                                String address, boolean mode) {
 

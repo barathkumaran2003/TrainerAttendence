@@ -114,4 +114,60 @@ public class UserService implements UserServiceInterface {
         User user = userRepository.findByUserId(userId);
         return (user != null) ? user.getProfilePhoto() : null;
     }
+    
+ // ------------------------------------------------------------
+ // ✅ Change Password Service
+ // ------------------------------------------------------------
+ @Override
+ public Object changePassword(String userId, String oldPassword, String newPassword) {
+
+     Map<String, Object> response = new HashMap<>();
+
+     User user = userRepository.findByUserId(userId);
+     if (user == null) {
+         response.put("status", "error");
+         response.put("message", "User not found");
+         return response;
+     }
+
+     if (!user.getPassword().equals(oldPassword)) {
+         response.put("status", "error");
+         response.put("message", "Old password is incorrect");
+         return response;
+     }
+
+     user.setPassword(newPassword);
+     userRepository.save(user);
+
+     response.put("status", "success");
+     response.put("message", "Password updated successfully");
+     return response;
+ }
+
+ // ------------------------------------------------------------
+ // ✅ Update Name Service
+ // ------------------------------------------------------------
+ @Override
+ public Object updateName(String userId, String newName) {
+
+     Map<String, Object> response = new HashMap<>();
+
+     User user = userRepository.findByUserId(userId);
+     if (user == null) {
+         response.put("status", "error");
+         response.put("message", "User not found");
+         return response;
+     }
+
+     user.setName(newName);
+     userRepository.save(user);
+
+     response.put("status", "success");
+     response.put("message", "Name updated successfully");
+     response.put("updatedName", newName);
+     return response;
+ }
+
+    
+    
 }

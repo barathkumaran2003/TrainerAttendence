@@ -20,7 +20,7 @@ public class AttendanceController {
     private final AttendanceServiceInterface attendanceService;
 
     @PostMapping("/checkin")
-    public Attendance checkIn(@RequestBody Map<String, Object> body) {
+    public String checkIn(@RequestBody Map<String, Object> body) {
         return attendanceService.checkIn(
                 (String) body.get("userId"),
                 (String) body.get("name"),
@@ -63,4 +63,6 @@ public class AttendanceController {
                 LocalDate.parse(endDate)
         );
     }
+    
+    
 }

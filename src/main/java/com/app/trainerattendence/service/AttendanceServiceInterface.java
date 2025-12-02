@@ -7,7 +7,7 @@ import com.app.trainerattendence.model.Attendance;
 
 public interface AttendanceServiceInterface {
 
-	Attendance checkIn(String userId, String userName, String department, double latitude, double longitude,
+	String checkIn(String userId, String userName, String department, double latitude, double longitude,
 			String address, boolean mode);
 
 	Attendance checkOut(String userId, double latitude, double longitude, String address, boolean mode);

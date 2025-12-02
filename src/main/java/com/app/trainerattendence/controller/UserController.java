@@ -69,5 +69,29 @@ public class UserController {
     public byte[] getProfilePhoto(@PathVariable String userId) {
         return userService.getProfilePhoto(userId);
     }
+    
+ // ------------------------------------------------------------
+ // ✅ Change Password API
+ // ------------------------------------------------------------
+ @Operation(summary = "Change Password", description = "Allows a user to change their password")
+ @PutMapping("/change-password")
+ public Object changePassword(@RequestBody Map<String, String> request) {
+     String userId = request.get("userId");
+     String oldPassword = request.get("oldPassword");
+     String newPassword = request.get("newPassword");
+     return userService.changePassword(userId, oldPassword, newPassword);
+ }
+
+ // ------------------------------------------------------------
+ // ✅ Update Name API
+ // ------------------------------------------------------------
+ @Operation(summary = "Update Name", description = "Update the name of a user")
+ @PutMapping("/update-name")
+ public Object updateName(@RequestBody Map<String, String> request) {
+     String userId = request.get("userId");
+     String newName = request.get("newName");
+     return userService.updateName(userId, newName);
+ }
+
 
 }
