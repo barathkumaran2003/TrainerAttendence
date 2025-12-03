@@ -33,7 +33,7 @@ public class AttendanceController {
     }
 
     @PostMapping("/checkout")
-    public Attendance checkOut(@RequestBody Map<String, Object> body) {
+    public String checkOut(@RequestBody Map<String, Object> body) {
         return attendanceService.checkOut(
                 (String) body.get("userId"),
                 Double.parseDouble(body.get("checkOutLatitude").toString()),
@@ -42,6 +42,8 @@ public class AttendanceController {
                 (boolean) body.get("checkOutMode")
         );
     }
+    
+    
 
     @GetMapping("/all")
     public List<Attendance> getAllAttendance() {

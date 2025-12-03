@@ -8,10 +8,12 @@ import java.util.List;
 
 public interface AttendanceRepository extends MongoRepository<Attendance, String> {
 
-    // FIX: Find today's record only
     Attendance findByUserIdAndDate(String userId, LocalDate date);
 
     List<Attendance> findByUserId(String userId);
 
     List<Attendance> findByDateBetween(LocalDate start, LocalDate end);
+
+    // ✅ FIX: When multiple check-ins exist in same day, get the latest one
+    Attendance findTopByUserIdAndDateOrderByCheckInTimeDesc(String userId, LocalDate date);
 }

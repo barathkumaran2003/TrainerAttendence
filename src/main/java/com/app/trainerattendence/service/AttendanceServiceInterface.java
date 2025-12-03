@@ -10,7 +10,7 @@ public interface AttendanceServiceInterface {
 	String checkIn(String userId, String userName, String department, double latitude, double longitude,
 			String address, boolean mode);
 
-	Attendance checkOut(String userId, double latitude, double longitude, String address, boolean mode);
+	String checkOut(String userId, double latitude, double longitude, String address, boolean mode);
 
 	List<Attendance> getAllAttendance();
 

@@ -1,7 +1,6 @@
 package com.app.trainerattendence.service;
 
 import com.app.trainerattendence.model.Attendance;
-import com.app.trainerattendence.model.User;
 import com.app.trainerattendence.repository.AttendanceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,18 +24,11 @@ public class AttendanceService implements AttendanceServiceInterface {
         return LocalDateTime.now(ZoneId.of("Asia/Kolkata"));
     }
 
-    // -------------------- CHECK-IN --------------------
     @Override
     public String checkIn(String userId, String userName, String department,
-                              double latitude, double longitude, String address, boolean mode) {
+                          double latitude, double longitude, String address, boolean mode) {
 
         LocalDate today = getTodayIST();
-
-        // ❗ Prevent multiple check-ins in same day
-        Attendance existing = attendanceRepository.findByUserIdAndDate(userId, today);
-        if (existing != null) {
-            return "Already checked-in today"; // Already checked-in today
-        }
 
         Attendance attendance = new Attendance();
 
@@ -52,37 +44,33 @@ public class AttendanceService implements AttendanceServiceInterface {
         attendance.setCheckInLongitude(longitude);
         attendance.setCheckInAddress(address);
 
-        attendance.setCheckOutMode(false); // default
+        attendance.setCheckOutMode(false);
 
         Attendance saved = attendanceRepository.save(attendance);
-        if(saved!=null)
-        {
+        if (saved != null) {
             return "Checked-in Successfully";
+        } else {
+            return "Error in saving the data";
         }
-        else
-        {
-        	return "Error in saving the data";
-        }
-       
     }
 
-    // -------------------- CHECK-OUT --------------------
+    // -------------------- CHECK-OUT (FIXED) --------------------
     @Override
-  
-    public Attendance checkOut(String userId, double latitude, double longitude,
-                               String address, boolean mode) {
+    public String checkOut(String userId, double latitude, double longitude,
+                           String address, boolean mode) {
 
         LocalDate today = getTodayIST();
 
-        // ✔ Find today's record ONLY (fixes your problem)
-        Attendance attendance = attendanceRepository.findByUserIdAndDate(userId, today);
+        // ❗ FIX: Get the LATEST check-in record for today
+        Attendance attendance =
+                attendanceRepository.findTopByUserIdAndDateOrderByCheckInTimeDesc(userId, today);
 
         if (attendance == null) {
-            return null; // No check-in today → cannot checkout
+            return "No Check-in today";
         }
 
         if (attendance.getCheckOutTime() != null) {
-            return attendance; // Already checked out
+            return "Already checked out";
         }
 
         attendance.setCheckOutMode(mode);
@@ -91,17 +79,20 @@ public class AttendanceService implements AttendanceServiceInterface {
         attendance.setCheckOutLongitude(longitude);
         attendance.setCheckOutAddress(address);
 
-        // duration
         Duration duration = Duration.between(attendance.getCheckInTime(), attendance.getCheckOutTime());
         long hours = duration.toHours();
         long minutes = duration.toMinutesPart();
 
         attendance.setDuration(hours + "h " + minutes + "m");
 
-        return attendanceRepository.save(attendance);
+        Attendance save = attendanceRepository.save(attendance);
+        if (save != null) {
+            return "Checked-out Successfully";
+        } else {
+            return "Error in saving the data";
+        }
     }
 
-    // -------------------- GET ALL --------------------
     @Override
     public List<Attendance> getAllAttendance() {
         List<Attendance> list = attendanceRepository.findAll();
@@ -114,7 +105,7 @@ public class AttendanceService implements AttendanceServiceInterface {
         List<Attendance> list = attendanceRepository.findByUserId(userId);
 
         if (list == null || list.isEmpty()) {
-            return List.of();  // return empty list instead of null
+            return List.of();
         }
 
         List<Attendance> reversed = new ArrayList<>(list);
@@ -122,7 +113,6 @@ public class AttendanceService implements AttendanceServiceInterface {
         Collections.reverse(reversed);
         return reversed;
     }
-
 
     @Override
     public List<Attendance> getAttendanceByDateRange(LocalDate start, LocalDate end) {
