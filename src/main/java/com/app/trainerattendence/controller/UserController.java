@@ -26,7 +26,7 @@ public class UserController {
 
     @Operation(summary = "Register a new user", description = "Registers a new user with role (Admin/User).")
     @PostMapping("/register")
-    public User registerUser(@RequestBody User user) {
+    public String registerUser(@RequestBody User user) {
         return userService.registerUser(user);
     }
 

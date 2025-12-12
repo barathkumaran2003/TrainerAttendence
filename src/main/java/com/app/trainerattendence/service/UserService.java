@@ -22,12 +22,26 @@ public class UserService implements UserServiceInterface {
 
     // ✅ Register New User
     @Override
-    public User registerUser(User user) {
-        if (user.getUserId() == null || user.getUserId().isEmpty()) {
-            user.setUserId(UUID.randomUUID().toString());
+    public String registerUser(User user) {
+        try {
+            if (user.getUserId() == null || user.getUserId().isEmpty()) {
+                user.setUserId(UUID.randomUUID().toString());
+            }
+
+            User existingEmail = userRepository.findByEmail(user.getEmail());
+
+            if (existingEmail != null) {
+                return "Email already exists!";
+            }
+
+            userRepository.save(user);
+            return "User registered successfully";
+
+        } catch (Exception e) {
+            return "Error occurred: " + e.getMessage();
         }
-        return userRepository.save(user);
     }
+
 
     // ✅ Get Only Normal Users (Exclude Admins)
     @Override

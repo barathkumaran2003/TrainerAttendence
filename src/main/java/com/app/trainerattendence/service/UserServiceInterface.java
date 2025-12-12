@@ -9,7 +9,7 @@ import com.app.trainerattendence.model.User;
 
 public interface UserServiceInterface {
 
-	User registerUser(User user);
+	String registerUser(User user);
 
 	List<User> getAllNormalUsers();
 
